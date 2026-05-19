@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Desafio 7 Dias — Power Wellness</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --rose: #cf98dd;
+  --rose-light: #fcedf4;
+  --rose-mid: #f1cee0;
+  --lilac: #c5b3d8;
+  --sage: #b5bdb7;
+  --cream: #fdf9f6;
+  --ink: #2a1f2d;
+  --ink-mid: #5a4a5e;
+  --ink-soft: #9a8a9e;
+  --line: rgba(197,179,216,0.25);
+  --gold: #c4a44a;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--ink); min-height: 100vh; }
+
+.header {
+  text-align: center;
+  padding: 2rem 1.5rem 1.5rem;
+  border-bottom: 0.5px solid var(--line);
+  position: relative;
+}
+.header::before {
+  content: '';
+  position: absolute; top: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, transparent, var(--rose), var(--lilac), var(--rose), transparent);
+}
+.logo { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 500; color: var(--ink); margin-bottom: 4px; }
+.logo span { color: var(--rose); font-style: italic; }
+.tagline { font-size: 12px; color: var(--ink-soft); font-weight: 300; letter-spacing: .04em; }
+
+.tabs { display: flex; border-bottom: 0.5px solid var(--line); background: #fff; position: sticky; top: 0; z-index: 10; }
+.tab-btn { flex: 1; padding: 12px 8px; background: none; border: none; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500; color: var(--ink-soft); border-bottom: 2px solid transparent; margin-bottom: -0.5px; transition: all .2s; }
+.tab-btn.active { color: var(--ink); border-bottom-color: var(--rose); }
+
+.view { display: none; padding: 1.25rem; max-width: 520px; margin: 0 auto; }
+.view.active { display: block; }
+
+/* NOME */
+.name-screen { text-align: center; padding: 2rem 1rem; }
+.name-screen p { font-size: 14px; color: var(--ink-mid); margin-bottom: 1.5rem; line-height: 1.6; }
+.name-screen input {
+  width: 100%; padding: 12px 16px; border: 0.5px solid var(--lilac);
+  border-radius: 12px; font-family: 'DM Sans', sans-serif; font-size: 15px;
+  background: #fff; color: var(--ink); outline: none; margin-bottom: 12px;
+}
+.name-screen input:focus { border-color: var(--rose); }
+.btn-primary {
+  width: 100%; padding: 14px; background: var(--rose); border: none;
+  border-radius: 12px; font-family: 'DM Sans', sans-serif; font-size: 14px;
+  font-weight: 500; color: #fff; cursor: pointer; transition: opacity .2s;
+}
+.btn-primary:hover { opacity: .88; }
+.btn-primary:disabled { opacity: .5; cursor: not-allowed; }
+
+/* DIAS */
+.day-selector { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-bottom: 1.25rem; }
+.day-pill {
+  padding: 8px 4px; border-radius: 10px; border: 0.5px solid var(--line);
+  background: #fff; cursor: pointer; text-align: center; transition: all .2s;
+  font-size: 11px; font-weight: 500; color: var(--ink-soft);
+}
+.day-pill .day-num { display: block; font-size: 16px; font-weight: 500; color: var(--ink); margin-bottom: 2px; }
+.day-pill.active { background: var(--rose-light); border-color: var(--lilac); }
+.day-pill.complete { background: var(--rose-light); border-color: var(--rose); }
+.day-pill.complete .day-num { color: var(--rose); }
+
+.day-header { margin-bottom: 1rem; }
+.day-title { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 500; color: var(--ink); }
+.day-subtitle { font-size: 12px; color: var(--ink-soft); margin-top: 2px; }
+.day-pts { display: inline-block; margin-top: 6px; font-size: 12px; font-weight: 500; color: var(--rose); background: var(--rose-light); padding: 3px 10px; border-radius: 20px; border: 0.5px solid var(--lilac); }
+
+.section-label { font-size: 10px; font-weight: 500; text-transform: uppercase; letter-spacing: .08em; color: var(--ink-soft); margin: 1rem 0 8px; }
+
+.check-list { display: flex; flex-direction: column; gap: 6px; }
+.check-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 11px 14px; background: #fff;
+  border: 0.5px solid var(--line); border-radius: 10px;
+  cursor: pointer; transition: all .2s; user-select: none;
+}
+.check-item:hover { border-color: var(--lilac); }
+.check-item.checked { background: var(--rose-light); border-color: var(--rose); }
+.check-box {
+  width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid var(--lilac);
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  transition: all .2s; font-size: 12px; color: transparent;
+}
+.check-item.checked .check-box { background: var(--rose); border-color: var(--rose); color: #fff; }
+.check-info { flex: 1; }
+.check-name { font-size: 13px; font-weight: 500; color: var(--ink); }
+.check-pts { font-size: 11px; color: var(--ink-soft); margin-top: 1px; }
+.check-item.checked .check-name { color: var(--ink-mid); }
+
+.day-score-bar { margin: 1.25rem 0; background: #fff; border: 0.5px solid var(--line); border-radius: 12px; padding: 14px 16px; }
+.score-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+.score-label { font-size: 12px; color: var(--ink-soft); }
+.score-val { font-size: 18px; font-weight: 500; color: var(--ink); }
+.progress-track { background: var(--rose-mid); border-radius: 4px; height: 6px; overflow: hidden; }
+.progress-fill { height: 100%; background: var(--rose); border-radius: 4px; transition: width .4s ease; }
+
+.save-btn {
+  width: 100%; padding: 13px; background: var(--ink); border: none;
+  border-radius: 12px; font-family: 'DM Sans', sans-serif; font-size: 14px;
+  font-weight: 500; color: #fff; cursor: pointer; margin-top: .5rem; transition: opacity .2s;
+}
+.save-btn:hover { opacity: .85; }
+.save-ok { text-align: center; font-size: 12px; color: var(--rose); margin-top: 8px; display: none; }
+
+/* RANKING */
+.total-card { background: var(--rose-light); border: 0.5px solid var(--lilac); border-radius: 14px; padding: 1.25rem; text-align: center; margin-bottom: 1.25rem; }
+.total-pts { font-size: 40px; font-weight: 500; color: var(--rose); line-height: 1; }
+.total-label { font-size: 12px; color: var(--ink-soft); margin-top: 4px; }
+.total-name { font-size: 14px; font-weight: 500; color: var(--ink-mid); margin-bottom: 4px; }
+
+.ranking-list { display: flex; flex-direction: column; gap: 8px; }
+.rank-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px; background: #fff;
+  border: 0.5px solid var(--line); border-radius: 12px;
+}
+.rank-pos { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 500; flex-shrink: 0; }
+.rank-1 { background: #fef9e7; color: #b8860b; border: 1px solid #d4af37; }
+.rank-2 { background: #f5f5f5; color: #777; border: 1px solid #bbb; }
+.rank-3 { background: #fdf0e8; color: #8b4513; border: 1px solid #cd7f32; }
+.rank-other { background: var(--rose-light); color: var(--rose); border: 0.5px solid var(--lilac); }
+.rank-name { flex: 1; font-size: 13px; font-weight: 500; color: var(--ink); }
+.rank-pts { font-size: 14px; font-weight: 500; color: var(--rose); }
+.rank-badge { font-size: 10px; background: var(--rose-mid); color: var(--ink-mid); padding: 2px 8px; border-radius: 20px; margin-top: 2px; display: inline-block; }
+.rank-medal { font-size: 16px; }
+.prize-banner { background: linear-gradient(135deg, var(--rose-light), #fff); border: 0.5px solid var(--lilac); border-radius: 12px; padding: 12px 14px; margin-bottom: 1.25rem; }
+.prize-title { font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: .07em; color: var(--ink-soft); margin-bottom: 8px; }
+.prize-item { font-size: 13px; color: var(--ink-mid); padding: 4px 0; display: flex; align-items: center; gap: 8px; }
+.prize-num { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 500; flex-shrink: 0; }
+.p1 { background: #fef9e7; color: #b8860b; }
+.p2 { background: #f5f5f5; color: #777; }
+.p3 { background: #fdf0e8; color: #8b4513; }
+
+.loading { text-align: center; padding: 2rem; font-size: 13px; color: var(--ink-soft); }
+.refresh-btn { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; padding: 6px 14px; border-radius: 20px; border: 0.5px solid var(--line); background: none; cursor: pointer; color: var(--ink-soft); font-family: 'DM Sans', sans-serif; margin-bottom: 1rem; }
+.empty { text-align: center; padding: 2rem; font-size: 13px; color: var(--ink-soft); font-style: italic; }
+
+/* COMO FUNCIONA */
+.info-card { background: #fff; border: 0.5px solid var(--line); border-radius: 12px; padding: 1rem 1.25rem; margin-bottom: 10px; }
+.info-card-title { font-size: 13px; font-weight: 500; color: var(--ink); margin-bottom: 6px; }
+.info-card-text { font-size: 12px; color: var(--ink-mid); line-height: 1.6; }
+.pts-table { width: 100%; font-size: 12px; }
+.pts-table tr td { padding: 5px 0; border-bottom: 0.5px solid var(--line); color: var(--ink-mid); }
+.pts-table tr:last-child td { border-bottom: none; }
+.pts-table td:last-child { text-align: right; font-weight: 500; color: var(--rose); }
+.tip-box { background: var(--rose-light); border: 0.5px solid var(--lilac); border-radius: 10px; padding: 10px 14px; font-size: 12px; color: var(--ink-mid); line-height: 1.6; margin-top: 10px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">Power <span>Wellness.</span></div>
+  <div class="tagline">Desafio 7 Dias · Poderosa no seu ritmo</div>
+</div>
+
+<div class="tabs">
+  <button class="tab-btn active" onclick="switchTab('checklist')">Meu checklist</button>
+  <button class="tab-btn" onclick="switchTab('ranking')">Ranking</button>
+  <button class="tab-btn" onclick="switchTab('como')">Como funciona</button>
+</div>
+
+<!-- CHECKLIST -->
+<div id="view-checklist" class="view active">
+  <div id="name-screen" class="name-screen">
+    <div class="logo" style="margin-bottom:12px">Olá, Poderosa!</div>
+    <p>Para registrar sua pontuação e aparecer no ranking, nos diga seu nome:</p>
+    <input type="text" id="nameInput" placeholder="Seu primeiro nome" maxlength="30">
+    <button class="btn-primary" onclick="setName()">Começar desafio →</button>
+  </div>
+
+  <div id="checklist-screen" style="display:none">
+    <div class="day-selector" id="daySelector"></div>
+
+    <div class="day-header">
+      <div class="day-title" id="dayTitle">Dia 1 · Corpo</div>
+      <div class="day-subtitle" id="daySubtitle">Hoje eu paro para me sentir.</div>
+      <span class="day-pts" id="dayPts">0 / 85 pontos</span>
+    </div>
+
+    <div class="section-label">Nutrição</div>
+    <div class="check-list" id="checkNutri"></div>
+
+    <div class="section-label">Exercício & Desafio</div>
+    <div class="check-list" id="checkExtra"></div>
+
+    <div class="day-score-bar">
+      <div class="score-row">
+        <span class="score-label">Pontos do dia</span>
+        <span class="score-val" id="dayScoreVal">0</span>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="dayProgress" style="width:0%"></div></div>
+    </div>
+
+    <button class="save-btn" onclick="saveProgress()">Salvar progresso no ranking</button>
+    <div class="save-ok" id="saveOk">✓ Salvo! Você está no ranking.</div>
+  </div>
+</div>
+
+<!-- RANKING -->
+<div id="view-ranking" class="view">
+  <div class="prize-banner">
+    <div class="prize-title">Prêmios para as 3 mais poderosas</div>
+    <div class="prize-item"><div class="prize-num p1">1°</div> Brinde especial Grazzy Vaz</div>
+    <div class="prize-item"><div class="prize-num p2">2°</div> Brinde surpresa</div>
+    <div class="prize-item"><div class="prize-num p3">3°</div> Brinde surpresa</div>
+  </div>
+  <button class="refresh-btn" onclick="loadRanking()">↺ Atualizar ranking</button>
+  <div id="myScore"></div>
+  <div class="ranking-list" id="rankingList"><div class="loading">Carregando ranking…</div></div>
+</div>
+
+<!-- COMO FUNCIONA -->
+<div id="view-como" class="view">
+  <div class="info-card">
+    <div class="info-card-title">Como ganhar pontos</div>
+    <div class="info-card-text">Marque cada item que você completou no dia. Os pontos somam automaticamente!</div>
+  </div>
+  <div class="info-card">
+    <div class="info-card-title">Pontuação por item</div>
+    <table class="pts-table">
+      <tr><td>Café da manhã</td><td>+10 pts</td></tr>
+      <tr><td>Almoço</td><td>+10 pts</td></tr>
+      <tr><td>Lanche da tarde</td><td>+5 pts</td></tr>
+      <tr><td>Jantar</td><td>+10 pts</td></tr>
+      <tr><td>Ceia</td><td>+5 pts</td></tr>
+      <tr><td>Meta de água (2L)</td><td>+15 pts</td></tr>
+      <tr><td>Exercício do dia</td><td>+20 pts</td></tr>
+      <tr><td>Desafio do dia</td><td>+10 pts</td></tr>
+    </table>
+    <div style="margin-top:10px;font-size:12px;color:var(--ink-soft)">Total possível por dia: <strong style="color:var(--rose)">85 pontos</strong> · 7 dias: <strong style="color:var(--rose)">595 pontos</strong></div>
+  </div>
+  <div class="info-card">
+    <div class="info-card-title">Regras</div>
+    <div class="info-card-text">
+      Marque apenas o que você realmente fez — aqui a honestidade é o primeiro passo para a transformação.<br><br>
+      Clique em "Salvar progresso" todo dia para atualizar sua pontuação no ranking.<br><br>
+      As 3 primeiras colocadas serão anunciadas no evento do dia 31/05 na Lagoa da Pampulha.
+    </div>
+  </div>
+  <div class="tip-box">"Não é sobre perfeição. É sobre escolha." — Grazzy</div>
+</div>
+
+<script>
+const DAYS = [
+  { label: 'Corpo', quote: 'Hoje eu paro para me sentir.' },
+  { label: 'Mente', quote: 'Hoje eu faço o que venho adiando.' },
+  { label: 'Espírito', quote: 'Hoje eu treino meu olhar para a beleza.' },
+  { label: 'Mente', quote: 'Hoje eu me dou permissão para descansar.' },
+  { label: 'Corpo', quote: 'Hoje eu me olho com amor.' },
+  { label: 'Espírito', quote: 'Hoje eu me reconecto com quem vim ser.' },
+  { label: 'Corpo·Mente·Espírito', quote: 'Hoje eu celebro quem estou me tornando.' }
+]
+
+const ITEMS = [
+  { id: 'cafe', label: 'Café da manhã', pts: 10, cat: 'nutri' },
+  { id: 'almoco', label: 'Almoço', pts: 10, cat: 'nutri' },
+  { id: 'lanche', label: 'Lanche da tarde', pts: 5, cat: 'nutri' },
+  { id: 'jantar', label: 'Jantar', pts: 10, cat: 'nutri' },
+  { id: 'ceia', label: 'Ceia', pts: 5, cat: 'nutri' },
+  { id: 'agua', label: 'Meta de água (2 litros)', pts: 15, cat: 'extra' },
+  { id: 'exercicio', label: 'Exercício do dia', pts: 20, cat: 'extra' },
+  { id: 'desafio', label: 'Desafio do dia', pts: 10, cat: 'extra' }
+]
+
+const MAX_PTS_DAY = 85
+let userName = localStorage.getItem('pw_name') || ''
+let currentDay = 0
+let checks = JSON.parse(localStorage.getItem('pw_checks') || '{}')
+
+function switchTab(tab) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'))
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'))
+  document.getElementById('view-' + tab).classList.add('active')
+  event.target.classList.add('active')
+  if (tab === 'ranking') loadRanking()
+}
+
+function setName() {
+  const input = document.getElementById('nameInput').value.trim()
+  if (!input) return
+  userName = input
+  localStorage.setItem('pw_name', userName)
+  showChecklist()
+}
+
+function showChecklist() {
+  document.getElementById('name-screen').style.display = 'none'
+  document.getElementById('checklist-screen').style.display = 'block'
+  buildDaySelector()
+  renderDay(0)
+}
+
+function buildDaySelector() {
+  const sel = document.getElementById('daySelector')
+  sel.innerHTML = DAYS.map((d, i) => {
+    const dayPts = getDayTotal(i)
+    const complete = dayPts >= MAX_PTS_DAY
+    return `<div class="day-pill ${i === 0 ? 'active' : ''} ${complete ? 'complete' : ''}" id="pill-${i}" onclick="renderDay(${i})">
+      <span class="day-num">${i + 1}</span>
+      ${complete ? '✓' : d.label.split('·')[0].trim()}
+    </div>`
+  }).join('')
+}
+
+function renderDay(dayIdx) {
+  currentDay = dayIdx
+  document.querySelectorAll('.day-pill').forEach((p, i) => {
+    p.classList.toggle('active', i === dayIdx)
+  })
+  const day = DAYS[dayIdx]
+  document.getElementById('dayTitle').textContent = `Dia ${dayIdx + 1} · ${day.label}`
+  document.getElementById('daySubtitle').textContent = day.quote
+  renderChecks('nutri')
+  renderChecks('extra')
+  updateDayScore()
+}
+
+function renderChecks(cat) {
+  const container = document.getElementById('check' + (cat === 'nutri' ? 'Nutri' : 'Extra'))
+  container.innerHTML = ITEMS.filter(it => it.cat === cat).map(item => {
+    const key = `d${currentDay}_${item.id}`
+    const checked = checks[key]
+    return `<div class="check-item ${checked ? 'checked' : ''}" onclick="toggleCheck('${key}', this)">
+      <div class="check-box">${checked ? '✓' : ''}</div>
+      <div class="check-info">
+        <div class="check-name">${item.label}</div>
+        <div class="check-pts">+${item.pts} pontos</div>
+      </div>
+    </div>`
+  }).join('')
+}
+
+function toggleCheck(key, el) {
+  checks[key] = !checks[key]
+  localStorage.setItem('pw_checks', JSON.stringify(checks))
+  el.classList.toggle('checked')
+  const box = el.querySelector('.check-box')
+  box.textContent = checks[key] ? '✓' : ''
+  updateDayScore()
+  buildDaySelector()
+}
+
+function getDayTotal(dayIdx) {
+  return ITEMS.reduce((sum, item) => {
+    const key = `d${dayIdx}_${item.id}`
+    return sum + (checks[key] ? item.pts : 0)
+  }, 0)
+}
+
+function getTotalPts() {
+  return DAYS.reduce((sum, _, i) => sum + getDayTotal(i), 0)
+}
+
+function updateDayScore() {
+  const pts = getDayTotal(currentDay)
+  const pct = Math.round((pts / MAX_PTS_DAY) * 100)
+  document.getElementById('dayScoreVal').textContent = pts
+  document.getElementById('dayProgress').style.width = pct + '%'
+  document.getElementById('dayPts').textContent = `${pts} / ${MAX_PTS_DAY} pontos`
+}
+
+async function saveProgress() {
+  const btn = document.querySelector('.save-btn')
+  btn.disabled = true
+  btn.textContent = 'Salvando…'
+  const total = getTotalPts()
+  try {
+    await window.storage.set('ranking:' + userName.toLowerCase().replace(/\s/g, '_'), JSON.stringify({
+      name: userName, pts: total, updated: new Date().toISOString()
+    }), true)
+    document.getElementById('saveOk').style.display = 'block'
+    setTimeout(() => document.getElementById('saveOk').style.display = 'none', 3000)
+  } catch(e) {
+    alert('Erro ao salvar. Tente novamente.')
+  }
+  btn.disabled = false
+  btn.textContent = 'Salvar progresso no ranking'
+}
+
+async function loadRanking() {
+  const list = document.getElementById('rankingList')
+  const myDiv = document.getElementById('myScore')
+  list.innerHTML = '<div class="loading">Carregando…</div>'
+  try {
+    const result = await window.storage.list('ranking:', true)
+    const keys = result?.keys || []
+    if (!keys.length) { list.innerHTML = '<div class="empty">Nenhuma participante ainda.<br>Seja a primeira!</div>'; return }
+    const entries = []
+    for (const key of keys) {
+      try {
+        const r = await window.storage.get(key, true)
+        if (r?.value) entries.push(JSON.parse(r.value))
+      } catch(e) {}
+    }
+    entries.sort((a, b) => b.pts - a.pts)
+    const medals = ['🥇', '🥈', '🥉']
+    list.innerHTML = entries.map((e, i) => {
+      const isMe = e.name.toLowerCase() === userName.toLowerCase()
+      const posClass = i < 3 ? `rank-${i + 1}` : 'rank-other'
+      const medal = medals[i] || ''
+      return `<div class="rank-item" style="${isMe ? 'border-color:var(--rose);background:var(--rose-light)' : ''}">
+        <div class="rank-pos ${posClass}">${medal || (i + 1)}</div>
+        <div style="flex:1">
+          <div class="rank-name">${e.name}${isMe ? ' (você)' : ''}</div>
+          ${i < 3 ? `<div class="rank-badge">${i === 0 ? '1° lugar · Brinde especial' : i === 1 ? '2° lugar · Brinde surpresa' : '3° lugar · Brinde surpresa'}</div>` : ''}
+        </div>
+        <div class="rank-pts">${e.pts} pts</div>
+      </div>`
+    }).join('')
+    const myPos = entries.findIndex(e => e.name.toLowerCase() === userName.toLowerCase())
+    if (myPos >= 0) {
+      const me = entries[myPos]
+      myDiv.innerHTML = `<div class="total-card" style="margin-bottom:1rem">
+        <div class="total-name">${me.name}</div>
+        <div class="total-pts">${me.pts}</div>
+        <div class="total-label">pontos totais · ${myPos + 1}° lugar de ${entries.length}</div>
+      </div>`
+    }
+  } catch(e) {
+    list.innerHTML = '<div class="empty">Erro ao carregar. Tente novamente.</div>'
+  }
+}
+
+if (userName) { showChecklist() }
+</script>
+</body>
+</html>
